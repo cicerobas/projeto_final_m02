@@ -74,4 +74,6 @@ class DatabaseHelper {
       )
     ''');
   }
+
+  static String placeholders(int count) => List.filled(count, '?').join(', ');
 }
