@@ -9,6 +9,9 @@ import 'package:projeto_final_m02/data/datasources/remote/auth_remote_datasource
 import 'package:projeto_final_m02/data/datasources/remote/service_report_remote_datasource.dart';
 import 'package:projeto_final_m02/data/datasources/remote/ticket_remote_datasource.dart';
 import 'package:projeto_final_m02/data/repositories/auth_repository.dart';
+import 'package:projeto_final_m02/data/repositories/ticket_repository.dart';
+import 'package:projeto_final_m02/viewModel/login_view_model.dart';
+import 'package:projeto_final_m02/viewModel/splash_view_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'package:projeto_final_m02/data/datasources/local/database_helper.dart';
@@ -49,6 +52,14 @@ Future<void> setupDependencies() async {
       sessionDatasource: getIt(),
     ),
   );
+  getIt.registerLazySingleton<TicketRepository>(
+    () => TicketRepositoryImpl(
+      remoteDatasource: getIt(),
+      localDatasource: getIt(),
+    ),
+  );
+  getIt.registerFactory<SplashViewModel>(() => SplashViewModel(getIt()));
+  getIt.registerFactory<LoginViewModel>(
+    () => LoginViewModel(authRepository: getIt(), ticketRepository: getIt()),
+  );
 }
-
-//TODO VERIFICAR SINGLETON POR FACTORY
