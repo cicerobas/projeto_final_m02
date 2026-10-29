@@ -25,12 +25,14 @@ ServiceReportModel buildServiceReport({
   int ticketId = 1,
   int? remoteId,
   bool isSynced = false,
+  String? photoPath,
 }) => ServiceReportModel(
   ticketId: ticketId,
   remoteId: remoteId,
   technicalCategory: 'Conector danificado',
   procedureDescription: 'Feita nova conectorização da fibra.',
   resolvedAt: DateTime(2026, 10, 28, 9),
+  photoPath: photoPath,
   isSynced: isSynced,
   createdAt: DateTime(2026, 10, 28, 9),
 );
