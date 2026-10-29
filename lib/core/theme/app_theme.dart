@@ -6,6 +6,15 @@ abstract final class AppTheme {
   static ThemeData get light => ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(seedColor: _seedColor),
-    inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder()),
+    inputDecorationTheme: const InputDecorationTheme(
+      border: OutlineInputBorder(),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        minimumSize: const Size(64, 52),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: .w600),
+      ),
+    ),
+    snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
   );
 }
