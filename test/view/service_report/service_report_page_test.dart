@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:projeto_final_m02/data/models/ticket_model.dart';
 
 import 'package:projeto_final_m02/view/service_report/service_report_page.dart';
 import 'package:projeto_final_m02/viewModel/service_report_view_model.dart';
 
+import '../../helpers/mocks.dart';
 import '../../helpers/model_factories.dart';
 
 void main() {
@@ -14,12 +16,16 @@ void main() {
   final submitButton = find.text('Concluir atendimento');
 
   Future<void> pumpServiceReportPage(WidgetTester tester) {
-    final ticket = buildTicket();
+    final TicketModel ticket = buildTicket();
     return tester.pumpWidget(
       MaterialApp(
         home: ServiceReportPage(
           ticket: ticket,
-          viewModel: ServiceReportViewModel(ticket: ticket),
+          viewModel: ServiceReportViewModel(
+            ticket: ticket,
+            repository: MockServiceReportRepository(),
+            photoService: MockPhotoService(),
+          ),
         ),
       ),
     );
