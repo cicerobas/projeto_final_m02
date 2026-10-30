@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'package:projeto_final_m02/core/di/injection.dart';
 import 'package:projeto_final_m02/core/routes/app_routes.dart';
 import 'package:projeto_final_m02/core/services/location_service.dart';
 import 'package:projeto_final_m02/data/models/ticket_model.dart';
 import 'package:projeto_final_m02/view/home/widgets/ticket_card.dart';
+import 'package:projeto_final_m02/view/shared_widgets/message_state.dart';
 import 'package:projeto_final_m02/viewModel/home_view_model.dart';
 
 class HomePage extends StatefulWidget {
@@ -73,7 +75,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _openTicket(TicketModel ticket) async {
     await Navigator.of(context)
         .pushNamed(AppRoutes.serviceReport, arguments: ticket);
-    await _viewModel.loadTickets();
+    await _viewModel.refreshAfterServiceReport();
   }
 
   @override
@@ -86,7 +88,7 @@ class _HomePageState extends State<HomePage> {
           actions: [
             _SyncButton(
               isSyncing: _viewModel.isSyncing,
-              onPressed: _viewModel.synchronize,
+              onPressed: () => _viewModel.synchronize(isManual: true),
             ),
             IconButton(
               icon: const Icon(Icons.history),
@@ -119,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                 isLoading: _viewModel.isLoading,
                 errorMessage: _viewModel.errorMessage,
                 isSortedByDistance: _viewModel.isSortedByDistance,
-                onRefresh: _viewModel.synchronize,
+                onRefresh: () => _viewModel.synchronize(isManual: true),
                 onRetry: _viewModel.loadTickets,
                 onTicketTap: _openTicket,
               ),
@@ -276,7 +278,7 @@ class _TicketList extends StatelessWidget {
 
     final error = errorMessage;
     if (error != null && tickets.isEmpty) {
-      return _MessageState(
+      return MessageState(
         icon: Icons.error_outline,
         title: 'Não foi possível carregar os chamados',
         message: error,
@@ -292,7 +294,7 @@ class _TicketList extends StatelessWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               children: const [
                 SizedBox(height: 80),
-                _MessageState(
+                MessageState(
                   icon: Icons.task_alt,
                   title: 'Nenhum chamado em aberto',
                   message: 'Puxe a tela para baixo para buscar novos chamados.',
@@ -337,54 +339,6 @@ class _ListHeader extends StatelessWidget {
       child: Text(
         '$count $label$sorting',
         style: Theme.of(context).textTheme.labelLarge,
-      ),
-    );
-  }
-}
-
-class _MessageState extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String message;
-  final String? actionLabel;
-  final VoidCallback? onAction;
-
-  const _MessageState({
-    required this.icon,
-    required this.title,
-    required this.message,
-    this.actionLabel,
-    this.onAction,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final label = actionLabel;
-
-    return Padding(
-      padding: const .all(32),
-      child: Column(
-        mainAxisSize: .min,
-        children: [
-          Icon(icon, size: 64, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: textTheme.bodyMedium,
-          ),
-          if (label != null) ...[
-            const SizedBox(height: 16),
-            FilledButton(onPressed: onAction, child: Text(label)),
-          ],
-        ],
       ),
     );
   }

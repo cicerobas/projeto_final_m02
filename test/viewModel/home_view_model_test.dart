@@ -10,31 +10,41 @@ import '../helpers/model_factories.dart';
 
 void main() {
   late MockTicketRepository ticketRepository;
+  late MockSyncRepository syncRepository;
   late MockAuthRepository authRepository;
   late MockLocationService locationService;
   late MockConnectivityService connectivityService;
   late HomeViewModel viewModel;
 
-  final nearTicket = buildTicket(id: 1, latitude: -27.1004, longitude: -52.6152);
+  final nearTicket = buildTicket(
+    id: 1,
+    latitude: -27.1004,
+    longitude: -52.6152,
+  );
   final farTicket = buildTicket(id: 2, latitude: -27.2000, longitude: -52.7000);
 
   setUp(() {
     ticketRepository = MockTicketRepository();
+    syncRepository = MockSyncRepository();
     authRepository = MockAuthRepository();
     locationService = MockLocationService();
     connectivityService = MockConnectivityService();
     viewModel = HomeViewModel(
       ticketRepository: ticketRepository,
+      syncRepository: syncRepository,
       authRepository: authRepository,
       locationService: locationService,
       connectivityService: connectivityService,
     );
 
-    when(() => connectivityService.onStatusChanged).thenAnswer((_) => const Stream.empty());
+    when(() => connectivityService.onStatusChanged)
+        .thenAnswer((_) => const Stream.empty());
     when(() => authRepository.getLoggedUser()).thenAnswer((_) async => null);
-    when(() => ticketRepository.getActiveTickets()).thenAnswer((_) async => Success([farTicket, nearTicket]));
-    when(() => locationService.getCurrentLocation())
-        .thenAnswer((_) async => const LocationAvailable(latitude: -27.1, longitude: -52.615));
+    when(() => ticketRepository.getActiveTickets())
+        .thenAnswer((_) async => Success([farTicket, nearTicket]));
+    when(() => locationService.getCurrentLocation()).thenAnswer(
+      (_) async => const LocationAvailable(latitude: -27.1, longitude: -52.615),
+    );
   });
 
   tearDown(() => viewModel.dispose());
@@ -49,15 +59,20 @@ void main() {
       expect(viewModel.isSortedByDistance, isTrue);
     });
 
-    test('Encerra a sessão quando a API responde que o token expirou', () async {
-      when(() => connectivityService.isOnline()).thenAnswer((_) async => true);
-      when(() => ticketRepository.syncTickets()).thenAnswer((_) async => const Failure(UnauthorizedFailure()));
-      when(() => authRepository.logout()).thenAnswer((_) async {});
+    test(
+      'Encerra a sessão quando a API responde que o token expirou',
+      () async {
+        when(() => connectivityService.isOnline())
+            .thenAnswer((_) async => true);
+        when(() => syncRepository.syncAll())
+            .thenAnswer((_) async => const Failure(UnauthorizedFailure()));
+        when(() => authRepository.logout()).thenAnswer((_) async {});
 
-      await viewModel.init();
+        await viewModel.init();
 
-      expect(viewModel.isSessionExpired, isTrue);
-      verify(() => authRepository.logout()).called(1);
-    });
+        expect(viewModel.isSessionExpired, isTrue);
+        verify(() => authRepository.logout()).called(1);
+      },
+    );
   });
 }

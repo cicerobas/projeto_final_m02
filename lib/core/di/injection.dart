@@ -14,7 +14,9 @@ import 'package:projeto_final_m02/data/datasources/remote/ticket_remote_datasour
 import 'package:projeto_final_m02/data/models/ticket_model.dart';
 import 'package:projeto_final_m02/data/repositories/auth_repository.dart';
 import 'package:projeto_final_m02/data/repositories/service_report_repository.dart';
+import 'package:projeto_final_m02/data/repositories/sync_repository.dart';
 import 'package:projeto_final_m02/data/repositories/ticket_repository.dart';
+import 'package:projeto_final_m02/viewModel/history_view_model.dart';
 import 'package:projeto_final_m02/viewModel/home_view_model.dart';
 import 'package:projeto_final_m02/viewModel/login_view_model.dart';
 import 'package:projeto_final_m02/viewModel/service_report_view_model.dart';
@@ -44,6 +46,7 @@ Future<void> setupDependencies() async {
   getIt.registerLazySingleton<ServiceReportLocalDatasource>(
     () => ServiceReportLocalDatasourceImpl(getIt()),
   );
+
   getIt.registerLazySingleton<AppClient>(
     () => DioAppClient.create(
       tokenProvider: getIt<SessionLocalDatasource>().getToken,
@@ -71,7 +74,16 @@ Future<void> setupDependencies() async {
     ),
   );
   getIt.registerLazySingleton<ServiceReportRepository>(
-    () => ServiceReportRepositoryImpl(localDatasource: getIt()),
+    () => ServiceReportRepositoryImpl(
+      localDatasource: getIt(),
+      remoteDatasource: getIt(),
+    ),
+  );
+  getIt.registerLazySingleton<SyncRepository>(
+    () => SyncRepositoryImpl(
+      serviceReportRepository: getIt(),
+      ticketRepository: getIt(),
+    ),
   );
   getIt.registerFactory<SplashViewModel>(() => SplashViewModel(getIt()));
   getIt.registerFactory<LoginViewModel>(
@@ -80,6 +92,7 @@ Future<void> setupDependencies() async {
   getIt.registerFactory<HomeViewModel>(
     () => HomeViewModel(
       ticketRepository: getIt(),
+      syncRepository: getIt(),
       authRepository: getIt(),
       locationService: getIt(),
       connectivityService: getIt(),
@@ -90,6 +103,14 @@ Future<void> setupDependencies() async {
       ticket: ticket,
       repository: getIt(),
       photoService: getIt(),
+    ),
+  );
+  getIt.registerFactory<HistoryViewModel>(
+    () => HistoryViewModel(
+      serviceReportRepository: getIt(),
+      syncRepository: getIt(),
+      authRepository: getIt(),
+      connectivityService: getIt(),
     ),
   );
 }

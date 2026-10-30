@@ -1,6 +1,8 @@
 import 'package:intl/intl.dart';
 import 'package:projeto_final_m02/core/utils/json_parser.dart';
 
+enum SyncStatus { synced, pending, failed }
+
 class ServiceReportModel {
   static final _apiDateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
 
@@ -30,21 +32,25 @@ class ServiceReportModel {
     required this.createdAt,
   });
 
-  factory ServiceReportModel.fromMap(Map<String, dynamic> map) => ServiceReportModel(
-    id: map['id'] as int?,
-    remoteId: map['remote_id'] as int?,
-    ticketId: map['ticket_id'] as int,
-    technicalCategory: map['technical_category'] as String,
-    procedureDescription: map['procedure_description'] as String,
-    resolvedAt: DateTime.parse(map['resolved_at'] as String),
-    photoPath: map['photo_path'] as String?,
-    photoUrl: map['photo_url'] as String?,
-    isSynced: map['is_synced'] == 1,
-    syncError: map['sync_error'] as String?,
-    createdAt: DateTime.parse(map['created_at'] as String),
-  );
+  factory ServiceReportModel.fromMap(Map<String, dynamic> map) =>
+      ServiceReportModel(
+        id: map['id'] as int?,
+        remoteId: map['remote_id'] as int?,
+        ticketId: map['ticket_id'] as int,
+        technicalCategory: map['technical_category'] as String,
+        procedureDescription: map['procedure_description'] as String,
+        resolvedAt: DateTime.parse(map['resolved_at'] as String),
+        photoPath: map['photo_path'] as String?,
+        photoUrl: map['photo_url'] as String?,
+        isSynced: map['is_synced'] == 1,
+        syncError: map['sync_error'] as String?,
+        createdAt: DateTime.parse(map['created_at'] as String),
+      );
 
-  factory ServiceReportModel.fromHistoryJson(Map<String, dynamic> json, {required int ticketId}) => ServiceReportModel(
+  factory ServiceReportModel.fromHistoryJson(
+    Map<String, dynamic> json, {
+    required int ticketId,
+  }) => ServiceReportModel(
     remoteId: JsonParser.toInt(json['id']),
     ticketId: ticketId,
     technicalCategory: json['categoria_tecnico'] as String,
@@ -56,6 +62,11 @@ class ServiceReportModel {
   );
 
   bool get hasPhoto => photoPath != null || photoUrl != null;
+
+  SyncStatus get syncStatus {
+    if (isSynced) return SyncStatus.synced;
+    return syncError == null ? SyncStatus.pending : SyncStatus.failed;
+  }
 
   Map<String, dynamic> toMap() => {
     if (id != null) 'id': id,

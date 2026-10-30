@@ -23,14 +23,20 @@ TicketModel buildTicket({
   createdAt: DateTime(2026, 9, 28, 14, 20),
 );
 
-ServiceReportModel buildServiceReport({int ticketId = 1, int? remoteId, bool isSynced = false, String? photoPath}) =>
-    ServiceReportModel(
-      ticketId: ticketId,
-      remoteId: remoteId,
-      technicalCategory: 'Conector danificado',
-      procedureDescription: 'Feita nova conectorização da fibra.',
-      resolvedAt: DateTime(2026, 10, 28, 9),
-      photoPath: photoPath,
-      isSynced: isSynced,
-      createdAt: DateTime(2026, 10, 28, 9),
-    );
+ServiceReportModel buildServiceReport({
+  int? id,
+  int ticketId = 1,
+  int? remoteId,
+  bool isSynced = false,
+  String? photoPath,
+}) => ServiceReportModel(
+  id: id,
+  ticketId: ticketId,
+  remoteId: remoteId,
+  technicalCategory: 'Conector danificado',
+  procedureDescription: 'Feita nova conectorização da fibra.',
+  resolvedAt: DateTime(2026, 10, 28, 9),
+  photoPath: photoPath,
+  isSynced: isSynced,
+  createdAt: DateTime(2026, 10, 28, 9),
+);
