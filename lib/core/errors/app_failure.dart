@@ -27,3 +27,9 @@ final class DatabaseFailure extends AppFailure {
 final class UnknownFailure extends AppFailure {
   const UnknownFailure([super.message = 'Erro inesperado. Tente novamente.']);
 }
+
+final class PhotoFailure extends AppFailure {
+  const PhotoFailure([
+    super.message = 'Não foi possível obter a foto. Tente novamente.',
+  ]);
+}
