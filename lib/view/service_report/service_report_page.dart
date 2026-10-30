@@ -9,8 +9,8 @@ import 'package:projeto_final_m02/core/extensions/distance_extension.dart';
 import 'package:projeto_final_m02/core/services/photo_service.dart';
 import 'package:projeto_final_m02/core/utils/form_validators.dart';
 import 'package:projeto_final_m02/data/models/ticket_model.dart';
-import 'package:projeto_final_m02/view/widgets/confirm_dialog.dart';
-import 'package:projeto_final_m02/view/widgets/info_row.dart';
+import 'package:projeto_final_m02/view/shared_widgets/confirm_dialog.dart';
+import 'package:projeto_final_m02/view/shared_widgets/info_row.dart';
 import 'package:projeto_final_m02/viewModel/service_report_view_model.dart';
 
 class ServiceReportPage extends StatefulWidget {
