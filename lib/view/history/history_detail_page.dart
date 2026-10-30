@@ -38,9 +38,7 @@ class HistoryDetailPage extends StatelessWidget {
                           Expanded(
                             child: Text(
                               ticket.clientCode,
-                              style: textTheme.labelLarge?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                              style: textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
                             ),
                           ),
                           SyncStatusBadge(status: report.syncStatus),
@@ -49,15 +47,9 @@ class HistoryDetailPage extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(ticket.clientName, style: textTheme.titleLarge),
                       const SizedBox(height: 12),
-                      InfoRow(
-                        icon: Icons.place_outlined,
-                        text: ticket.fullAddress,
-                      ),
+                      InfoRow(icon: Icons.place_outlined, text: ticket.fullAddress),
                       const SizedBox(height: 6),
-                      InfoRow(
-                        icon: Icons.schedule,
-                        text: 'Aberto em ${ticket.createdAt.toDisplayLabel()}',
-                      ),
+                      InfoRow(icon: Icons.schedule, text: 'Aberto em ${ticket.createdAt.toDisplayLabel()}'),
                     ],
                   ),
                 ),
@@ -66,6 +58,7 @@ class HistoryDetailPage extends StatelessWidget {
                 const SizedBox(height: 12),
                 _SyncErrorNotice(message: report.syncError ?? ''),
               ],
+              const Divider(),
               _Section(
                 title: 'Problema relatado',
                 children: [
@@ -74,6 +67,7 @@ class HistoryDetailPage extends StatelessWidget {
                   Text(ticket.problemDescription),
                 ],
               ),
+              const Divider(),
               _Section(
                 title: 'Parecer técnico',
                 children: [
@@ -87,14 +81,10 @@ class HistoryDetailPage extends StatelessWidget {
                   ),
                 ],
               ),
+              const Divider(),
               _Section(
                 title: 'Foto',
-                children: [
-                  _ReportPhoto(
-                    photoPath: report.photoPath,
-                    photoUrl: report.photoUrl,
-                  ),
-                ],
+                children: [_ReportPhoto(photoPath: report.photoPath, photoUrl: report.photoUrl)],
               ),
             ],
           ),
@@ -113,7 +103,7 @@ class _Section extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const .only(top: 24),
+      padding: const .only(top: 8, bottom: 8),
       child: Column(
         crossAxisAlignment: .stretch,
         children: [
@@ -137,10 +127,7 @@ class _SyncErrorNotice extends StatelessWidget {
 
     return Container(
       padding: const .all(12),
-      decoration: BoxDecoration(
-        color: colors.errorContainer,
-        borderRadius: .circular(8),
-      ),
+      decoration: BoxDecoration(color: colors.errorContainer, borderRadius: .circular(8)),
       child: InfoRow(
         icon: Icons.error_outline,
         text: 'Registro recusado pela API: $message',
@@ -162,9 +149,7 @@ class _ReportPhoto extends StatelessWidget {
     final url = photoUrl;
 
     if (path != null && File(path).existsSync()) {
-      return _PhotoFrame(
-        child: Image.file(File(path), fit: BoxFit.cover, cacheWidth: 1000),
-      );
+      return _PhotoFrame(child: Image.file(File(path), fit: BoxFit.cover, cacheWidth: 1000));
     }
 
     if (url != null) {
@@ -173,9 +158,8 @@ class _ReportPhoto extends StatelessWidget {
           url,
           fit: BoxFit.cover,
           cacheWidth: 1000,
-          loadingBuilder: (context, child, progress) => progress == null
-              ? child
-              : const Center(child: CircularProgressIndicator()),
+          loadingBuilder: (context, child, progress) =>
+              progress == null ? child : const Center(child: CircularProgressIndicator()),
           errorBuilder: (context, error, stackTrace) => const _PhotoPlaceholder(
             icon: Icons.cloud_off_outlined,
             message: 'Não foi possível carregar a foto. Verifique a conexão.',
@@ -184,10 +168,7 @@ class _ReportPhoto extends StatelessWidget {
       );
     }
 
-    return const _PhotoPlaceholder(
-      icon: Icons.no_photography_outlined,
-      message: 'Atendimento sem foto.',
-    );
+    return const _PhotoPlaceholder(icon: Icons.no_photography_outlined, message: 'Atendimento sem foto.');
   }
 }
 
@@ -217,10 +198,7 @@ class _PhotoPlaceholder extends StatelessWidget {
 
     return Container(
       height: 120,
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerHighest,
-        borderRadius: .circular(12),
-      ),
+      decoration: BoxDecoration(color: colors.surfaceContainerHighest, borderRadius: .circular(12)),
       child: Column(
         mainAxisAlignment: .center,
         children: [
