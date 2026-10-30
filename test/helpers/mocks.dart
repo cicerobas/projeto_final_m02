@@ -2,6 +2,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:projeto_final_m02/core/network/app_client.dart';
 import 'package:projeto_final_m02/core/services/connectivity_service.dart';
 import 'package:projeto_final_m02/core/services/location_service.dart';
+import 'package:projeto_final_m02/core/services/maps_service.dart';
 import 'package:projeto_final_m02/core/services/photo_service.dart';
 import 'package:projeto_final_m02/data/datasources/local/service_report_local_datasource.dart';
 import 'package:projeto_final_m02/data/datasources/local/session_local_datasource.dart';
@@ -18,11 +19,9 @@ class MockAppClient extends Mock implements AppClient {}
 
 class MockAuthRemoteDatasource extends Mock implements AuthRemoteDatasource {}
 
-class MockSessionLocalDatasource extends Mock
-    implements SessionLocalDatasource {}
+class MockSessionLocalDatasource extends Mock implements SessionLocalDatasource {}
 
-class MockTicketRemoteDatasource extends Mock
-    implements TicketRemoteDatasource {}
+class MockTicketRemoteDatasource extends Mock implements TicketRemoteDatasource {}
 
 class MockTicketLocalDatasource extends Mock implements TicketLocalDatasource {}
 
@@ -34,15 +33,14 @@ class MockLocationService extends Mock implements LocationService {}
 
 class MockConnectivityService extends Mock implements ConnectivityService {}
 
-class MockServiceReportLocalDatasource extends Mock
-    implements ServiceReportLocalDatasource {}
+class MockServiceReportLocalDatasource extends Mock implements ServiceReportLocalDatasource {}
 
-class MockServiceReportRepository extends Mock
-    implements ServiceReportRepository {}
+class MockServiceReportRepository extends Mock implements ServiceReportRepository {}
 
 class MockPhotoService extends Mock implements PhotoService {}
 
-class MockServiceReportRemoteDatasource extends Mock
-    implements ServiceReportRemoteDatasource {}
+class MockServiceReportRemoteDatasource extends Mock implements ServiceReportRemoteDatasource {}
 
 class MockSyncRepository extends Mock implements SyncRepository {}
+
+class MockMapsService extends Mock implements MapsService {}

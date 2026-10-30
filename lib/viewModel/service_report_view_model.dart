@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:projeto_final_m02/core/result/result.dart';
+import 'package:projeto_final_m02/core/services/maps_service.dart';
 import 'package:projeto_final_m02/core/services/photo_service.dart';
 import 'package:projeto_final_m02/data/models/service_report_model.dart';
 
@@ -10,11 +11,13 @@ class ServiceReportViewModel extends ChangeNotifier {
   final TicketModel ticket;
   final ServiceReportRepository _repository;
   final PhotoService _photoService;
+  final MapsService _mapsService;
 
   ServiceReportViewModel({
     required this.ticket,
     required this._repository,
     required this._photoService,
+    required this._mapsService,
   });
 
   String? _category;
@@ -32,8 +35,7 @@ class ServiceReportViewModel extends ChangeNotifier {
   bool get isPickingPhoto => _isPickingPhoto;
   bool get isSaving => _isSaving;
 
-  bool get hasChanges =>
-      _category != null || _description.trim().isNotEmpty || _photoPath != null;
+  bool get hasChanges => _category != null || _description.trim().isNotEmpty || _photoPath != null;
 
   DateTime get earliestResolutionDate {
     final DateTime now = DateTime.now();
@@ -118,5 +120,13 @@ class ServiceReportViewModel extends ChangeNotifier {
     final String? message = _feedbackMessage;
     _feedbackMessage = null;
     return message;
+  }
+
+  Future<void> openRoute() async {
+    final bool opened = await _mapsService.openRoute(latitude: ticket.latitude, longitude: ticket.longitude);
+    if (opened) return;
+
+    _feedbackMessage = 'Não foi possível abrir o mapa. Verifique se há um app de mapas instalado.';
+    notifyListeners();
   }
 }

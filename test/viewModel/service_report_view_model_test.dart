@@ -12,6 +12,7 @@ import '../helpers/model_factories.dart';
 void main() {
   late MockServiceReportRepository repository;
   late MockPhotoService photoService;
+  late MockMapsService mapsService;
   late ServiceReportViewModel viewModel;
 
   setUpAll(() => registerFallbackValue(buildServiceReport()));
@@ -19,13 +20,14 @@ void main() {
   setUp(() {
     repository = MockServiceReportRepository();
     photoService = MockPhotoService();
+    mapsService = MockMapsService();
     viewModel = ServiceReportViewModel(
       ticket: buildTicket(id: 7),
       repository: repository,
       photoService: photoService,
+      mapsService: mapsService,
     );
-    when(() => repository.completeReport(any()))
-        .thenAnswer((_) async => const Success(null));
+    when(() => repository.completeReport(any())).thenAnswer((_) async => const Success(null));
     when(() => photoService.deletePhoto(any())).thenAnswer((_) async {});
   });
 
@@ -44,8 +46,7 @@ void main() {
 
       expect(saved, isTrue);
       final ServiceReportModel report =
-          verify(() => repository.completeReport(captureAny())).captured.single
-              as ServiceReportModel;
+          verify(() => repository.completeReport(captureAny())).captured.single as ServiceReportModel;
       expect(report.ticketId, 7);
       expect(report.procedureDescription, 'Fusão da fibra e teste de sinal.');
       expect(report.photoPath, '/fotos/report.jpg');
