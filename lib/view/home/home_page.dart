@@ -3,7 +3,7 @@ import 'package:projeto_final_m02/core/di/injection.dart';
 import 'package:projeto_final_m02/core/routes/app_routes.dart';
 import 'package:projeto_final_m02/core/services/location_service.dart';
 import 'package:projeto_final_m02/data/models/ticket_model.dart';
-import 'package:projeto_final_m02/view/widgets/ticket_card.dart';
+import 'package:projeto_final_m02/view/home/widgets/ticket_card.dart';
 import 'package:projeto_final_m02/viewModel/home_view_model.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,7 +16,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final HomeViewModel _viewModel = widget.viewModel ?? getIt<HomeViewModel>();
+  late final HomeViewModel _viewModel =
+      widget.viewModel ?? getIt<HomeViewModel>();
   late final AppLifecycleListener _lifecycleListener;
   bool _hasRedirected = false;
 
@@ -24,7 +25,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _viewModel.addListener(_onViewModelChanged);
-    _lifecycleListener = AppLifecycleListener(onResume: _viewModel.onAppResumed);
+    _lifecycleListener = AppLifecycleListener(
+      onResume: _viewModel.onAppResumed,
+    );
     _viewModel.init();
   }
 
@@ -45,7 +48,8 @@ class _HomePageState extends State<HomePage> {
 
     final message = _viewModel.takeFeedbackMessage();
     if (message != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -59,13 +63,16 @@ class _HomePageState extends State<HomePage> {
     _hasRedirected = true;
 
     if (message != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
     }
-    Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (_) => false);
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil(AppRoutes.login, (_) => false);
   }
 
   Future<void> _openTicket(TicketModel ticket) async {
-    await Navigator.of(context).pushNamed(AppRoutes.serviceReport, arguments: ticket);
+    await Navigator.of(context)
+        .pushNamed(AppRoutes.serviceReport, arguments: ticket);
     await _viewModel.loadTickets();
   }
 
@@ -77,13 +84,19 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: _HomeTitle(userName: _viewModel.userName),
           actions: [
-            _SyncButton(isSyncing: _viewModel.isSyncing, onPressed: _viewModel.synchronize),
+            _SyncButton(
+              isSyncing: _viewModel.isSyncing,
+              onPressed: _viewModel.synchronize,
+            ),
             IconButton(
               icon: const Icon(Icons.history),
-              onPressed: () => Navigator.of(context).pushNamed(AppRoutes.history),
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(AppRoutes.history),
             ),
             PopupMenuButton<void>(
-              itemBuilder: (_) => [PopupMenuItem(onTap: _logout, child: const Text('Sair'))],
+              itemBuilder: (_) => [
+                PopupMenuItem(onTap: _logout, child: const Text('Sair')),
+              ],
             ),
           ],
         ),
@@ -92,10 +105,14 @@ class _HomePageState extends State<HomePage> {
             if (!_viewModel.isOnline)
               const _StatusBanner(
                 icon: Icons.cloud_off_outlined,
-                message: 'Você está offline. Exibindo chamados salvos no aparelho.',
+                message:
+                    'Você está offline. Exibindo chamados salvos no aparelho.',
               ),
             if (_viewModel.locationIssue case final issue?)
-              _LocationBanner(issue: issue, onAction: _viewModel.handleLocationIssue),
+              _LocationBanner(
+                issue: issue,
+                onAction: _viewModel.handleLocationIssue,
+              ),
             Expanded(
               child: _TicketList(
                 tickets: _viewModel.tickets,
@@ -127,7 +144,8 @@ class _HomeTitle extends StatelessWidget {
       crossAxisAlignment: .start,
       children: [
         const Text('Meus chamados'),
-        if (firstName != null) Text('Olá, $firstName', style: Theme.of(context).textTheme.bodySmall),
+        if (firstName != null)
+          Text('Olá, $firstName', style: Theme.of(context).textTheme.bodySmall),
       ],
     );
   }
@@ -144,7 +162,11 @@ class _SyncButton extends StatelessWidget {
     if (isSyncing) {
       return const Padding(
         padding: .all(14),
-        child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+        child: SizedBox(
+          width: 20,
+          height: 20,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
       );
     }
 
@@ -161,13 +183,22 @@ class _LocationBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (message, actionLabel) = switch (issue) {
-      LocationIssue.serviceDisabled => ('GPS desligado. Ative para ordenar os chamados por proximidade.', 'Ativar'),
-      LocationIssue.permissionDenied => ('Permita o acesso à localização para ordenar por proximidade.', 'Permitir'),
+      LocationIssue.serviceDisabled => (
+        'GPS desligado. Ative para ordenar os chamados por proximidade.',
+        'Ativar',
+      ),
+      LocationIssue.permissionDenied => (
+        'Permita o acesso à localização para ordenar por proximidade.',
+        'Permitir',
+      ),
       LocationIssue.permissionDeniedForever => (
         'Localização bloqueada. Libere o acesso nas configurações do app.',
         'Configurações',
       ),
-      LocationIssue.unavailable => ('Não foi possível obter sua localização.', 'Tentar de novo'),
+      LocationIssue.unavailable => (
+        'Não foi possível obter sua localização.',
+        'Tentar de novo',
+      ),
     };
 
     return _StatusBanner(
@@ -185,7 +216,12 @@ class _StatusBanner extends StatelessWidget {
   final String? actionLabel;
   final VoidCallback? onAction;
 
-  const _StatusBanner({required this.icon, required this.message, this.actionLabel, this.onAction});
+  const _StatusBanner({
+    required this.icon,
+    required this.message,
+    this.actionLabel,
+    this.onAction,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -201,9 +237,13 @@ class _StatusBanner extends StatelessWidget {
             Icon(icon, color: colors.onSecondaryContainer),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(message, style: TextStyle(color: colors.onSecondaryContainer)),
+              child: Text(
+                message,
+                style: TextStyle(color: colors.onSecondaryContainer),
+              ),
             ),
-            if (label != null) TextButton(onPressed: onAction, child: Text(label)),
+            if (label != null)
+              TextButton(onPressed: onAction, child: Text(label)),
           ],
         ),
       ),
@@ -264,11 +304,17 @@ class _TicketList extends StatelessWidget {
               itemCount: tickets.length + 1,
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  return _ListHeader(count: tickets.length, isSortedByDistance: isSortedByDistance);
+                  return _ListHeader(
+                    count: tickets.length,
+                    isSortedByDistance: isSortedByDistance,
+                  );
                 }
 
                 final ticket = tickets[index - 1];
-                return TicketCard(ticket: ticket, onTap: () => onTicketTap(ticket));
+                return TicketCard(
+                  ticket: ticket,
+                  onTap: () => onTicketTap(ticket),
+                );
               },
             ),
     );
@@ -288,7 +334,10 @@ class _ListHeader extends StatelessWidget {
 
     return Padding(
       padding: const .fromLTRB(4, 4, 4, 8),
-      child: Text('$count $label$sorting', style: Theme.of(context).textTheme.labelLarge),
+      child: Text(
+        '$count $label$sorting',
+        style: Theme.of(context).textTheme.labelLarge,
+      ),
     );
   }
 }
@@ -320,10 +369,21 @@ class _MessageState extends StatelessWidget {
         children: [
           Icon(icon, size: 64, color: Theme.of(context).colorScheme.primary),
           const SizedBox(height: 16),
-          Text(title, textAlign: TextAlign.center, style: textTheme.titleMedium),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: textTheme.titleMedium,
+          ),
           const SizedBox(height: 8),
-          Text(message, textAlign: TextAlign.center, style: textTheme.bodyMedium),
-          if (label != null) ...[const SizedBox(height: 16), FilledButton(onPressed: onAction, child: Text(label))],
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: textTheme.bodyMedium,
+          ),
+          if (label != null) ...[
+            const SizedBox(height: 16),
+            FilledButton(onPressed: onAction, child: Text(label)),
+          ],
         ],
       ),
     );
