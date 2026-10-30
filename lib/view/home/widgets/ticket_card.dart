@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:projeto_final_m02/core/extensions/distance_extension.dart';
 
 import 'package:projeto_final_m02/data/models/ticket_model.dart';
-import 'package:projeto_final_m02/view/widgets/info_row.dart';
+import 'package:projeto_final_m02/view/shared_widgets/info_row.dart';
 
 class TicketCard extends StatelessWidget {
   final TicketModel ticket;
