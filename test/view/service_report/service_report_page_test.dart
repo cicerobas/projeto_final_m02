@@ -9,10 +9,7 @@ import '../../helpers/mocks.dart';
 import '../../helpers/model_factories.dart';
 
 void main() {
-  final descriptionField = find.widgetWithText(
-    TextFormField,
-    'Procedimento realizado *',
-  );
+  final descriptionField = find.widgetWithText(TextFormField, 'Procedimento realizado *');
   final submitButton = find.text('Concluir atendimento');
 
   Future<void> pumpServiceReportPage(WidgetTester tester) {
@@ -25,6 +22,7 @@ void main() {
             ticket: ticket,
             repository: MockServiceReportRepository(),
             photoService: MockPhotoService(),
+            mapsService: MockMapsService(),
           ),
         ),
       ),
@@ -32,32 +30,19 @@ void main() {
   }
 
   group('ServiceReportPage', () {
-    testWidgets(
-      'Exibe erro nos campos e SnackBar quando o formulário é inválido',
-      (tester) async {
-        await pumpServiceReportPage(tester);
+    testWidgets('Exibe erro nos campos e SnackBar quando o formulário é inválido', (tester) async {
+      await pumpServiceReportPage(tester);
 
-        await tester.enterText(descriptionField, 'curto');
-        await tester.tap(submitButton);
-        await tester.pump();
+      await tester.enterText(descriptionField, 'curto');
+      await tester.tap(submitButton);
+      await tester.pump();
 
-        expect(find.text('Selecione a categoria técnica'), findsOneWidget);
-        expect(
-          find.text('Tamanho mínimo da descrição: 10 caracteres'),
-          findsOneWidget,
-        );
-        expect(
-          find.text(
-            'Corrija os campos destacados para concluir o atendimento.',
-          ),
-          findsOneWidget,
-        );
-      },
-    );
+      expect(find.text('Selecione a categoria técnica'), findsOneWidget);
+      expect(find.text('Tamanho mínimo da descrição: 10 caracteres'), findsOneWidget);
+      expect(find.text('Corrija os campos destacados para concluir o atendimento.'), findsOneWidget);
+    });
 
-    testWidgets('Não aceita descrição formada apenas por espaços', (
-      tester,
-    ) async {
+    testWidgets('Não aceita descrição formada apenas por espaços', (tester) async {
       await pumpServiceReportPage(tester);
 
       await tester.enterText(descriptionField, '            ');
@@ -67,19 +52,14 @@ void main() {
       expect(find.text('Descreva o procedimento realizado'), findsOneWidget);
     });
 
-    testWidgets('Pede confirmação quando o formulário é válido', (
-      tester,
-    ) async {
+    testWidgets('Pede confirmação quando o formulário é válido', (tester) async {
       await pumpServiceReportPage(tester);
 
       await tester.tap(find.byType(DropdownButtonFormField<String>));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Fibra rompida').last);
       await tester.pumpAndSettle();
-      await tester.enterText(
-        descriptionField,
-        'Fusão da fibra no ponto rompido e teste de sinal.',
-      );
+      await tester.enterText(descriptionField, 'Fusão da fibra no ponto rompido e teste de sinal.');
       await tester.tap(submitButton);
       await tester.pumpAndSettle();
 

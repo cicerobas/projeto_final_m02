@@ -4,6 +4,7 @@ import 'package:projeto_final_m02/core/network/app_client.dart';
 import 'package:projeto_final_m02/core/network/dio_app_client.dart';
 import 'package:projeto_final_m02/core/services/connectivity_service.dart';
 import 'package:projeto_final_m02/core/services/location_service.dart';
+import 'package:projeto_final_m02/core/services/maps_service.dart';
 import 'package:projeto_final_m02/core/services/photo_service.dart';
 import 'package:projeto_final_m02/data/datasources/local/service_report_local_datasource.dart';
 import 'package:projeto_final_m02/data/datasources/local/session_local_datasource.dart';
@@ -29,66 +30,35 @@ final getIt = GetIt.instance;
 
 Future<void> setupDependencies() async {
   getIt.registerSingleton<Database>(await DatabaseHelper.db);
-  getIt.registerLazySingleton<FlutterSecureStorage>(
-    () => const FlutterSecureStorage(),
-  );
+  getIt.registerLazySingleton<FlutterSecureStorage>(() => const FlutterSecureStorage());
   getIt.registerLazySingleton<ConnectivityService>(ConnectivityPlusService.new);
-  getIt.registerLazySingleton<LocationService>(
-    () => const GeolocatorLocationService(),
-  );
+  getIt.registerLazySingleton<LocationService>(() => const GeolocatorLocationService());
   getIt.registerLazySingleton<PhotoService>(ImagePickerPhotoService.new);
-  getIt.registerLazySingleton<SessionLocalDatasource>(
-    () => SessionLocalDatasourceImpl(getIt()),
-  );
-  getIt.registerLazySingleton<TicketLocalDatasource>(
-    () => TicketLocalDatasourceImpl(getIt()),
-  );
-  getIt.registerLazySingleton<ServiceReportLocalDatasource>(
-    () => ServiceReportLocalDatasourceImpl(getIt()),
-  );
+  getIt.registerLazySingleton<SessionLocalDatasource>(() => SessionLocalDatasourceImpl(getIt()));
+  getIt.registerLazySingleton<TicketLocalDatasource>(() => TicketLocalDatasourceImpl(getIt()));
+  getIt.registerLazySingleton<ServiceReportLocalDatasource>(() => ServiceReportLocalDatasourceImpl(getIt()));
 
   getIt.registerLazySingleton<AppClient>(
-    () => DioAppClient.create(
-      tokenProvider: getIt<SessionLocalDatasource>().getToken,
-    ),
+    () => DioAppClient.create(tokenProvider: getIt<SessionLocalDatasource>().getToken),
   );
-  getIt.registerLazySingleton<AuthRemoteDatasource>(
-    () => AuthRemoteDatasourceImpl(getIt()),
-  );
-  getIt.registerLazySingleton<TicketRemoteDatasource>(
-    () => TicketRemoteDatasourceImpl(getIt()),
-  );
-  getIt.registerLazySingleton<ServiceReportRemoteDatasource>(
-    () => ServiceReportRemoteDatasourceImpl(getIt()),
-  );
+  getIt.registerLazySingleton<AuthRemoteDatasource>(() => AuthRemoteDatasourceImpl(getIt()));
+  getIt.registerLazySingleton<TicketRemoteDatasource>(() => TicketRemoteDatasourceImpl(getIt()));
+  getIt.registerLazySingleton<ServiceReportRemoteDatasource>(() => ServiceReportRemoteDatasourceImpl(getIt()));
   getIt.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(
-      remoteDatasource: getIt(),
-      sessionDatasource: getIt(),
-    ),
+    () => AuthRepositoryImpl(remoteDatasource: getIt(), sessionDatasource: getIt()),
   );
   getIt.registerLazySingleton<TicketRepository>(
-    () => TicketRepositoryImpl(
-      remoteDatasource: getIt(),
-      localDatasource: getIt(),
-    ),
+    () => TicketRepositoryImpl(remoteDatasource: getIt(), localDatasource: getIt()),
   );
   getIt.registerLazySingleton<ServiceReportRepository>(
-    () => ServiceReportRepositoryImpl(
-      localDatasource: getIt(),
-      remoteDatasource: getIt(),
-    ),
+    () => ServiceReportRepositoryImpl(localDatasource: getIt(), remoteDatasource: getIt()),
   );
+  getIt.registerLazySingleton<MapsService>(() => const UrlLauncherMapsService());
   getIt.registerLazySingleton<SyncRepository>(
-    () => SyncRepositoryImpl(
-      serviceReportRepository: getIt(),
-      ticketRepository: getIt(),
-    ),
+    () => SyncRepositoryImpl(serviceReportRepository: getIt(), ticketRepository: getIt()),
   );
   getIt.registerFactory<SplashViewModel>(() => SplashViewModel(getIt()));
-  getIt.registerFactory<LoginViewModel>(
-    () => LoginViewModel(authRepository: getIt(), ticketRepository: getIt()),
-  );
+  getIt.registerFactory<LoginViewModel>(() => LoginViewModel(authRepository: getIt(), ticketRepository: getIt()));
   getIt.registerFactory<HomeViewModel>(
     () => HomeViewModel(
       ticketRepository: getIt(),
@@ -99,11 +69,8 @@ Future<void> setupDependencies() async {
     ),
   );
   getIt.registerFactoryParam<ServiceReportViewModel, TicketModel, void>(
-    (ticket, _) => ServiceReportViewModel(
-      ticket: ticket,
-      repository: getIt(),
-      photoService: getIt(),
-    ),
+    (ticket, _) =>
+        ServiceReportViewModel(ticket: ticket, repository: getIt(), photoService: getIt(), mapsService: getIt()),
   );
   getIt.registerFactory<HistoryViewModel>(
     () => HistoryViewModel(

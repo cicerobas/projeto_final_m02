@@ -45,6 +45,11 @@ class _ServiceReportPageState extends State<ServiceReportPage> {
 
   void _dismissKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
 
+  void _openRoute() {
+    _dismissKeyboard();
+    _viewModel.openRoute();
+  }
+
   Future<void> _pickPhoto(PhotoSource source) {
     _dismissKeyboard();
     return _viewModel.pickPhoto(source);
@@ -59,10 +64,7 @@ class _ServiceReportPageState extends State<ServiceReportPage> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(
-          backgroundColor: isError ? Theme.of(context).colorScheme.error : null,
-          content: Text(message),
-        ),
+        SnackBar(backgroundColor: isError ? Theme.of(context).colorScheme.error : null, content: Text(message)),
       );
   }
 
@@ -71,10 +73,7 @@ class _ServiceReportPageState extends State<ServiceReportPage> {
 
     if (!_formKey.currentState!.validate()) {
       setState(() => _autovalidateMode = .onUserInteraction);
-      _showSnackBar(
-        'Corrija os campos destacados para concluir o atendimento.',
-        isError: true,
-      );
+      _showSnackBar('Corrija os campos destacados para concluir o atendimento.', isError: true);
       return;
     }
 
@@ -90,9 +89,7 @@ class _ServiceReportPageState extends State<ServiceReportPage> {
     final bool saved = await _viewModel.complete();
     if (!saved || !mounted) return;
 
-    _showSnackBar(
-      'Atendimento salvo no aparelho. Ele será enviado na próxima sincronização.',
-    );
+    _showSnackBar('Atendimento salvo no aparelho. Ele será enviado na próxima sincronização.');
     Navigator.of(context).pop(true);
   }
 
@@ -116,15 +113,7 @@ class _ServiceReportPageState extends State<ServiceReportPage> {
     );
     final TimeOfDay selectedTime = time ?? TimeOfDay.fromDateTime(current);
 
-    _viewModel.updateResolvedAt(
-      DateTime(
-        date.year,
-        date.month,
-        date.day,
-        selectedTime.hour,
-        selectedTime.minute,
-      ),
-    );
+    _viewModel.updateResolvedAt(DateTime(date.year, date.month, date.day, selectedTime.hour, selectedTime.minute));
   }
 
   Future<void> _onPopInvoked(bool didPop) async {
@@ -165,12 +154,9 @@ class _ServiceReportPageState extends State<ServiceReportPage> {
               child: Column(
                 crossAxisAlignment: .stretch,
                 children: [
-                  _TicketHeader(ticket: widget.ticket),
+                  _TicketHeader(ticket: widget.ticket, onOpenRoute: _openRoute),
                   const SizedBox(height: 24),
-                  Text(
-                    'Parecer técnico',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+                  Text('Parecer técnico', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 12),
                   _CategoryField(onChanged: _viewModel.selectCategory),
                   const SizedBox(height: 16),
@@ -181,10 +167,7 @@ class _ServiceReportPageState extends State<ServiceReportPage> {
                     builder: (context, _) => Column(
                       crossAxisAlignment: .stretch,
                       children: [
-                        _ResolvedAtField(
-                          value: _viewModel.resolvedAt,
-                          onTap: _pickResolvedAt,
-                        ),
+                        _ResolvedAtField(value: _viewModel.resolvedAt, onTap: _pickResolvedAt),
                         const SizedBox(height: 24),
                         _PhotoField(
                           photoPath: _viewModel.photoPath,
@@ -205,10 +188,7 @@ class _ServiceReportPageState extends State<ServiceReportPage> {
             padding: const .fromLTRB(16, 8, 16, 16),
             child: ListenableBuilder(
               listenable: _viewModel,
-              builder: (context, _) => _SubmitButton(
-                isSaving: _viewModel.isSaving,
-                onPressed: _submit,
-              ),
+              builder: (context, _) => _SubmitButton(isSaving: _viewModel.isSaving, onPressed: _submit),
             ),
           ),
         ),
@@ -219,8 +199,9 @@ class _ServiceReportPageState extends State<ServiceReportPage> {
 
 class _TicketHeader extends StatelessWidget {
   final TicketModel ticket;
+  final VoidCallback onOpenRoute;
 
-  const _TicketHeader({required this.ticket});
+  const _TicketHeader({required this.ticket, required this.onOpenRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -233,28 +214,23 @@ class _TicketHeader extends StatelessWidget {
         child: Column(
           crossAxisAlignment: .start,
           children: [
-            Text(
-              ticket.clientCode,
-              style: textTheme.labelLarge?.copyWith(
-                color: theme.colorScheme.primary,
-              ),
-            ),
+            Text(ticket.clientCode, style: textTheme.labelLarge?.copyWith(color: theme.colorScheme.primary)),
             const SizedBox(height: 4),
             Text(ticket.clientName, style: textTheme.titleLarge),
             const SizedBox(height: 12),
             InfoRow(icon: Icons.place_outlined, text: ticket.fullAddress),
-            if (ticket.distanceKm case final distance?) ...[
+            if (ticket.distanceKm case final double distance?) ...[
               const SizedBox(height: 6),
-              InfoRow(
-                icon: Icons.near_me_outlined,
-                text: '${distance.toDistanceLabel()} de você',
-              ),
+              InfoRow(icon: Icons.near_me_outlined, text: '${distance.toDistanceLabel()} de você'),
             ],
-            const SizedBox(height: 6),
-            InfoRow(
-              icon: Icons.schedule,
-              text: 'Aberto em ${ticket.createdAt.toDisplayLabel()}',
+            const SizedBox(height: 12),
+            FilledButton.tonalIcon(
+              onPressed: onOpenRoute,
+              icon: const Icon(Icons.directions_outlined),
+              label: const Text('Como chegar'),
             ),
+            const SizedBox(height: 12),
+            InfoRow(icon: Icons.schedule, text: 'Aberto em ${ticket.createdAt.toDisplayLabel()}'),
             const Divider(height: 24),
             Text(ticket.reportedCategory, style: textTheme.titleSmall),
             const SizedBox(height: 4),
@@ -275,15 +251,9 @@ class _CategoryField extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
       isExpanded: true,
-      decoration: const InputDecoration(
-        labelText: 'Categoria técnica *',
-        prefixIcon: Icon(Icons.build_outlined),
-      ),
+      decoration: const InputDecoration(labelText: 'Categoria técnica *', prefixIcon: Icon(Icons.build_outlined)),
       items: TechnicalCategories.values
-          .map(
-            (category) =>
-                DropdownMenuItem(value: category, child: Text(category)),
-          )
+          .map((category) => DropdownMenuItem(value: category, child: Text(category)))
           .toList(),
       validator: FormValidators.category,
       onChanged: onChanged,
@@ -307,8 +277,7 @@ class _DescriptionField extends StatelessWidget {
       decoration: const InputDecoration(
         labelText: 'Procedimento realizado *',
         hintText: 'Ex: troca do conector e teste de sinal',
-        helperText:
-            'Mínimo de ${FormValidators.minDescriptionLength} caracteres',
+        helperText: 'Mínimo de ${FormValidators.minDescriptionLength} caracteres',
         alignLabelWithHint: true,
       ),
       validator: FormValidators.procedureDescription,
@@ -347,12 +316,7 @@ class _PhotoField extends StatelessWidget {
   final ValueChanged<PhotoSource> onPick;
   final VoidCallback onRemove;
 
-  const _PhotoField({
-    required this.photoPath,
-    required this.isLoading,
-    required this.onPick,
-    required this.onRemove,
-  });
+  const _PhotoField({required this.photoPath, required this.isLoading, required this.onPick, required this.onRemove});
 
   @override
   Widget build(BuildContext context) {
@@ -361,20 +325,12 @@ class _PhotoField extends StatelessWidget {
     return Column(
       crossAxisAlignment: .stretch,
       children: [
-        Text(
-          'Foto do atendimento (opcional)',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        Text('Foto do atendimento (opcional)', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 12),
         if (path != null) ...[
           ClipRRect(
             borderRadius: .circular(12),
-            child: Image.file(
-              File(path),
-              height: 220,
-              fit: BoxFit.cover,
-              cacheWidth: 800,
-            ),
+            child: Image.file(File(path), height: 220, fit: BoxFit.cover, cacheWidth: 800),
           ),
           const SizedBox(height: 8),
         ],
@@ -403,10 +359,7 @@ class _PhotoField extends StatelessWidget {
               ),
               if (path != null) ...[
                 const SizedBox(width: 4),
-                IconButton(
-                  onPressed: onRemove,
-                  icon: const Icon(Icons.delete_outline),
-                ),
+                IconButton(onPressed: onRemove, icon: const Icon(Icons.delete_outline)),
               ],
             ],
           ),
@@ -426,11 +379,7 @@ class _SubmitButton extends StatelessWidget {
     return FilledButton.icon(
       onPressed: isSaving ? null : onPressed,
       icon: isSaving
-          ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
+          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
           : const Icon(Icons.check),
       label: Text(isSaving ? 'Salvando...' : 'Concluir atendimento'),
     );
