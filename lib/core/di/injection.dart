@@ -4,6 +4,7 @@ import 'package:projeto_final_m02/core/network/app_client.dart';
 import 'package:projeto_final_m02/core/network/dio_app_client.dart';
 import 'package:projeto_final_m02/core/services/connectivity_service.dart';
 import 'package:projeto_final_m02/core/services/location_service.dart';
+import 'package:projeto_final_m02/core/services/photo_service.dart';
 import 'package:projeto_final_m02/data/datasources/local/service_report_local_datasource.dart';
 import 'package:projeto_final_m02/data/datasources/local/session_local_datasource.dart';
 import 'package:projeto_final_m02/data/datasources/local/ticket_local_datasource.dart';
@@ -12,6 +13,7 @@ import 'package:projeto_final_m02/data/datasources/remote/service_report_remote_
 import 'package:projeto_final_m02/data/datasources/remote/ticket_remote_datasource.dart';
 import 'package:projeto_final_m02/data/models/ticket_model.dart';
 import 'package:projeto_final_m02/data/repositories/auth_repository.dart';
+import 'package:projeto_final_m02/data/repositories/service_report_repository.dart';
 import 'package:projeto_final_m02/data/repositories/ticket_repository.dart';
 import 'package:projeto_final_m02/viewModel/home_view_model.dart';
 import 'package:projeto_final_m02/viewModel/login_view_model.dart';
@@ -32,6 +34,7 @@ Future<void> setupDependencies() async {
   getIt.registerLazySingleton<LocationService>(
     () => const GeolocatorLocationService(),
   );
+  getIt.registerLazySingleton<PhotoService>(ImagePickerPhotoService.new);
   getIt.registerLazySingleton<SessionLocalDatasource>(
     () => SessionLocalDatasourceImpl(getIt()),
   );
@@ -67,6 +70,9 @@ Future<void> setupDependencies() async {
       localDatasource: getIt(),
     ),
   );
+  getIt.registerLazySingleton<ServiceReportRepository>(
+    () => ServiceReportRepositoryImpl(localDatasource: getIt()),
+  );
   getIt.registerFactory<SplashViewModel>(() => SplashViewModel(getIt()));
   getIt.registerFactory<LoginViewModel>(
     () => LoginViewModel(authRepository: getIt(), ticketRepository: getIt()),
@@ -80,6 +86,10 @@ Future<void> setupDependencies() async {
     ),
   );
   getIt.registerFactoryParam<ServiceReportViewModel, TicketModel, void>(
-    (ticket, _) => ServiceReportViewModel(ticket: ticket),
+    (ticket, _) => ServiceReportViewModel(
+      ticket: ticket,
+      repository: getIt(),
+      photoService: getIt(),
+    ),
   );
 }
