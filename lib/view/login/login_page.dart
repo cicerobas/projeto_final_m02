@@ -16,8 +16,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late final LoginViewModel _viewModel =
-      widget.viewModel ?? getIt<LoginViewModel>();
+  late final LoginViewModel _viewModel = widget.viewModel ?? getIt<LoginViewModel>();
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -34,10 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) return;
 
-    final success = await _viewModel.login(
-      email: _emailController.text,
-      password: _passwordController.text,
-    );
+    final success = await _viewModel.login(email: _emailController.text, password: _passwordController.text);
     if (!success || !mounted) return;
 
     TextInput.finishAutofillContext();
@@ -73,8 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                           controller: _passwordController,
                           enabled: !_viewModel.isLoading,
                           isVisible: _viewModel.isPasswordVisible,
-                          onToggleVisibility:
-                              _viewModel.togglePasswordVisibility,
+                          onToggleVisibility: _viewModel.togglePasswordVisibility,
                           onChanged: _viewModel.clearError,
                           onSubmitted: _submit,
                         ),
@@ -112,28 +107,16 @@ class _LoginHeader extends StatelessWidget {
       children: [
         const AppLogo(size: 160),
         const SizedBox(height: 24),
-        Text(
-          'Field S.O.',
-          textAlign: TextAlign.center,
-          style: textTheme.headlineSmall,
-        ),
+        Text('Field S.O.', textAlign: TextAlign.center, style: textTheme.headlineSmall),
         const SizedBox(height: 8),
-        Text(
-          'Entre com seu e-mail e senha.',
-          textAlign: TextAlign.center,
-          style: textTheme.bodyMedium,
-        ),
+        Text('Entre com seu e-mail e senha.', textAlign: TextAlign.center, style: textTheme.bodyMedium),
       ],
     );
   }
 }
 
 class _EmailField extends StatelessWidget {
-  const _EmailField({
-    required this.controller,
-    required this.enabled,
-    required this.onChanged,
-  });
+  const _EmailField({required this.controller, required this.enabled, required this.onChanged});
 
   final TextEditingController controller;
   final bool enabled;
@@ -148,10 +131,7 @@ class _EmailField extends StatelessWidget {
       textInputAction: TextInputAction.next,
       autocorrect: false,
       autofillHints: const [AutofillHints.email],
-      decoration: const InputDecoration(
-        labelText: 'E-mail',
-        prefixIcon: Icon(Icons.email_outlined),
-      ),
+      decoration: const InputDecoration(labelText: 'E-mail', prefixIcon: Icon(Icons.email_outlined)),
       validator: FormValidators.email,
       onChanged: (_) => onChanged(),
     );
@@ -187,11 +167,7 @@ class _PasswordField extends StatelessWidget {
         labelText: 'Senha',
         prefixIcon: const Icon(Icons.lock_outline),
         suffixIcon: IconButton(
-          icon: Icon(
-            isVisible
-                ? Icons.visibility_off_outlined
-                : Icons.visibility_outlined,
-          ),
+          icon: Icon(isVisible ? Icons.visibility_off_outlined : Icons.visibility_outlined),
           onPressed: onToggleVisibility,
         ),
       ),
@@ -203,11 +179,7 @@ class _PasswordField extends StatelessWidget {
 }
 
 class _SubmitButton extends StatelessWidget {
-  const _SubmitButton({
-    required this.isLoading,
-    required this.loadingMessage,
-    required this.onPressed,
-  });
+  const _SubmitButton({required this.isLoading, required this.loadingMessage, required this.onPressed});
 
   final bool isLoading;
   final String loadingMessage;
@@ -221,11 +193,7 @@ class _SubmitButton extends StatelessWidget {
           ? Row(
               mainAxisSize: .min,
               children: [
-                const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
+                const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
                 const SizedBox(width: 12),
                 Text(loadingMessage),
               ],
@@ -246,19 +214,13 @@ class _ErrorBanner extends StatelessWidget {
 
     return Container(
       padding: const .all(12),
-      decoration: BoxDecoration(
-        color: colors.errorContainer,
-        borderRadius: BorderRadius.circular(8),
-      ),
+      decoration: BoxDecoration(color: colors.errorContainer, borderRadius: BorderRadius.circular(8)),
       child: Row(
         children: [
           Icon(Icons.error_outline, color: colors.onErrorContainer),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              message,
-              style: TextStyle(color: colors.onErrorContainer),
-            ),
+            child: Text(message, style: TextStyle(color: colors.onErrorContainer)),
           ),
         ],
       ),
