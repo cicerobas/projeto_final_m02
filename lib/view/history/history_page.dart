@@ -17,8 +17,7 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  late final HistoryViewModel _viewModel =
-      widget.viewModel ?? getIt<HistoryViewModel>();
+  late final HistoryViewModel _viewModel = widget.viewModel ?? getIt<HistoryViewModel>();
   final _searchController = TextEditingController();
   bool _hasRedirected = false;
 
@@ -41,18 +40,14 @@ class _HistoryPageState extends State<HistoryPage> {
   void _onViewModelChanged() {
     if (_viewModel.isSessionExpired && !_hasRedirected) {
       _hasRedirected = true;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sua sessão expirou. Entre novamente.')),
-      );
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil(AppRoutes.login, (_) => false);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sua sessão expirou. Entre novamente.')));
+      Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (_) => false);
       return;
     }
 
     final message = _viewModel.takeFeedbackMessage();
     if (message != null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -74,9 +69,12 @@ class _HistoryPageState extends State<HistoryPage> {
         appBar: AppBar(
           title: const Text('Histórico'),
           bottom: _viewModel.isRefreshing
-              ? const PreferredSize(
-                  preferredSize: .fromHeight(4),
-                  child: LinearProgressIndicator(),
+              ? PreferredSize(
+                  preferredSize: const Size.fromHeight(4),
+                  child: LinearProgressIndicator(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    backgroundColor: Colors.transparent,
+                  ),
                 )
               : null,
         ),
@@ -130,9 +128,7 @@ class _SearchField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: 'Buscar por nº do chamado, código ou cliente',
         prefixIcon: const Icon(Icons.search),
-        suffixIcon: hasQuery
-            ? IconButton(icon: const Icon(Icons.close), onPressed: onClear)
-            : null,
+        suffixIcon: hasQuery ? IconButton(icon: const Icon(Icons.close), onPressed: onClear) : null,
       ),
       onChanged: onChanged,
       onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
@@ -185,14 +181,12 @@ class _HistoryList extends StatelessWidget {
                 ? const MessageState(
                     icon: Icons.search_off,
                     title: 'Nenhum resultado',
-                    message:
-                        'Confira o número do chamado ou o código do cliente.',
+                    message: 'Confira o número do chamado ou o código do cliente.',
                   )
                 : const MessageState(
                     icon: Icons.history,
                     title: 'Nenhum atendimento concluído',
-                    message:
-                        'Os atendimentos que você concluir aparecerão aqui.',
+                    message: 'Os atendimentos que você concluir aparecerão aqui.',
                   ),
           ],
         ),
