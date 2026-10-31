@@ -2,13 +2,13 @@
 ![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
 
-# Field OS - Ordens de Serviço Offline
+# Field SO - Ordens de Serviço
 
 Um aplicativo Android desenvolvido em Flutter para técnicos de campo de provedores de internet gerenciarem suas ordens de serviço, **funcionando mesmo sem sinal**. Construído com arquitetura **offline-first** em camadas (**Datasource => Repository => ViewModel => View**), com estado via **ChangeNotifier**, injeção de dependência com **get_it** e persistência em **SQLite**. A sincronização com a API REST acontece sempre que houver conexão.
 
 ---
 ## 📸 Demonstração
-
+https://drive.google.com/file/d/1aBOxFoukNwqsApUaIgC-Cg533r_xGJaH/view?usp=drive_link
 | Login | Home | Atendimento |
 | :---: | :---: | :---: |
 | <img src="assets/screenshots/login.png" width="250" alt="Login" /> | <img src="assets/screenshots/home.png" width="250" alt="Home" /> | <img src="assets/screenshots/service_report.png" width="250" alt="Atendimento" /> |
