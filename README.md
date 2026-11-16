@@ -8,7 +8,6 @@ Um aplicativo Android desenvolvido em Flutter para técnicos de campo de provedo
 
 ---
 ## 📸 Demonstração
-https://drive.google.com/file/d/1aBOxFoukNwqsApUaIgC-Cg533r_xGJaH/view?usp=drive_link
 | Login | Home | Atendimento |
 | :---: | :---: | :---: |
 | <img src="assets/screenshots/login.png" width="250" alt="Login" /> | <img src="assets/screenshots/home.png" width="250" alt="Home" /> | <img src="assets/screenshots/service_report.png" width="250" alt="Atendimento" /> |
